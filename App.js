@@ -5,9 +5,11 @@ import StcakNav from './src/Navigation/StcakNav';
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <StcakNav />
-    </NavigationContainer>
+    <View style={{flex: 1}}>
+      <NavigationContainer>
+        <StcakNav />
+      </NavigationContainer>
+    </View>
   );
 };
 
