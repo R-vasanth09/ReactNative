@@ -4,6 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from '../Screen/Home';
 import Account from '../Screen/Account';
 import TabNav from '../Navigation/TabNav';
+import DrawerNav from '../Navigation/DrawerNav';
 
 const Stack = createNativeStackNavigator();
 
@@ -11,8 +12,8 @@ const StcakNav = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="TabNav"
-        component={TabNav}
+        name="Drawer"
+        component={DrawerNav}
         options={{headerShown: false}}
       />
       <Stack.Screen
