@@ -8,50 +8,43 @@ import DrawerNav from '../Navigation/DrawerNav';
 import Flatlist from '../Screen/Flatlist';
 import Login from '../Screen/Login';
 import Signup from '../Screen/Signup';
-import {AsyncStorage} from '@react-native-async-storage/async-storage';
+
 
 const Stack = createNativeStackNavigator();
 
 const StcakNav = () => {
   const [IsLogined, setIsLogined] = React.useState(false);
 
-  const checkLogin = async () => {
-    const token = await AsyncStorage.getItem('Token');
-    if (token) {
-      setIsLogined(true);
-    }
-  };
+  // const checkLogin = async () => {
+  //   const token = await AsyncStorage.getItem('Token');
+  //   if (token) {
+  //     setIsLogined(true);
+  //   }
+  // };
 
-  React.useEffect(() => {
-    checkLogin();
-  }, []);
+  // React.useEffect(() => {
+  //   checkLogin();
+  // }, []);
 
   return (
-    <Stack.Navigator>
-      {IsLogined ? (
-        // After Login
-        <Stack.Screen
-          name="Drawer"
-          component={DrawerNav}
-          options={{headerShown: false}}
-        />
-      ) : (
-        // Before Login
-        <>
-          {/* <Stack.Screen name="Login" component={Login} options={{headerShown:false}} /> */}
-
-          <Stack.Screen
-            name="Signup"
-            component={Signup}
-            options={{headerShown: false}}
-          />
-        </>
-      )}
-      {/* <Stack.Screen
+    <Stack.Navigator initialRouteName={'Login'}>
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
         name="Drawer"
         component={DrawerNav}
         options={{headerShown: false}}
-      /> */}
+      />
+
+      <Stack.Screen
+        name="Signup"
+        component={Signup}
+        options={{headerShown: false}}
+      />
+
       <Stack.Screen
         name="Home"
         component={Home}

@@ -16,12 +16,3 @@ export const deleteprduct = async id => {
   return await apiclient.delete(`/products/${id}`);
 };
 
-// LOGIN API
-export const loginUser = data => {
-  return apiclient.post('/auth/login', data);
-};
-
-// SIGNUP API
-export const signupUser = data => {
-  return apiclient.post('auth/register', data);
-};

@@ -1,12 +1,19 @@
-import axios from "axios";
+import axios from 'axios';
+
 
 const apiclient = axios.create({
-    baseURL: 'https://fakestoreapi.com', //https://fakestoreapi.com
-    timeout: 1000,
-    headers:{
-        'Content-Type': 'application/json',
-        'x-api-key':'free_user_3E9rLXQir7r4P6DpA4nFBjMKSBG'
-    }
-})
+  baseURL: 'http://192.168.31.77:5000/api/',
+});
+
+apiclient.interceptors.request.use(async config => {
+ 
+//   const token = await AsyncStorage.getItem('TOKEN');
+
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+
+//   return config;
+});
 
 export default apiclient;

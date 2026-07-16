@@ -7,7 +7,7 @@ import {
   Alert,
 } from 'react-native';
 
-import { signupUser } from '../Api/productApi';
+import {signup} from '../Api/apiclient';
 
 const Signup = ({navigation}) => {
 
@@ -16,22 +16,21 @@ const Signup = ({navigation}) => {
 
   const handleSignup = async () => {
     try {
-
-      const response = await signupUser({
-       username: email,
-       password: password,
+      const response = await signup({
+        name: username,
+        email: email,
+        password: password,
       });
 
-      console.log(response.data);
+      console.log('Signup Response:', response.data);
 
-      Alert.alert('Success', 'Signup Successful');
-       navigation.replace('Drawer');
-      
+      Alert.alert('Success', response.message || 'Signup Successful');
 
+      navigation.replace('Login');
     } catch (error) {
-      console.log(error.response?.data || error);
+      console.log('Signup Error:', error.response?.data || error.message);
 
-      Alert.alert('Error', 'Signup Failed');
+      Alert.alert('Error', error.response?.data?.message || 'Signup Failed');
     }
   };
 

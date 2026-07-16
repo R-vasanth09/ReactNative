@@ -2,28 +2,24 @@ import React, {useState} from 'react';
 
 import {View, TextInput, Button, Alert} from 'react-native';
 
+import {login} from '../Api/authAPi';
+import {saveToken} from '../storage/authStorage';
 
-import { loginUser } from '../Api/productApi';
-import { saveToken } from '../storage/authStorage';
-
-
-const Login = () => {
+const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     try {
-      const response = await loginUser({
-       username: email,
-       password: password,
+      const response = await login({
+        email: email,
+        password: password,
       });
 
       console.log(response.data);
 
-      // Save Token
-      await saveToken(response.data.token);
-
       Alert.alert('Success', 'Login Successful');
+      navigation.navigate('Drawer');
     } catch (error) {
       console.log(error.response?.data || error);
 
