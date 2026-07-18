@@ -6,6 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Home from '../Screen/Home';
 import Account from '../Screen/Account';
+import TopTab from './TopTab';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,13 +25,7 @@ const TabNav = () => {
             iconName = focused ? 'person' : 'person-outline';
           }
 
-          return (
-            <Ionicons
-              name={iconName}
-              size={size}
-              color={color}
-            />
-          );
+          return <Ionicons name={iconName} size={size} color={color} />;
         },
 
         tabBarActiveTintColor: '#ffffff',
@@ -42,16 +37,9 @@ const TabNav = () => {
 
         tabBarItemStyle: styles.tabItem,
       })}>
-      
-      <Tab.Screen
-        name="Home"
-        component={Home}
-      />
+      <Tab.Screen name="Home" component={Home} />
 
-      <Tab.Screen
-        name="Account"
-        component={Account}
-      />
+      <Tab.Screen name="Account" component={Account} />
     </Tab.Navigator>
   );
 };

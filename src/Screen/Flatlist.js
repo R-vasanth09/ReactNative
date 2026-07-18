@@ -1,174 +1,151 @@
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  memo,
+} from 'react';
 import {
-  Alert,
+  ActivityIndicator,
   FlatList,
-  Image,
+  SafeAreaView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import axios from 'axios';
-import {addprduct, getProducts,} from '../Api/productApi';
 
-const Flatlist = ({navigation}) => {
+const Item = memo(({item}) => {
+  return (
+    <View style={styles.itemContainer}>
+      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.price}>₹ {item.price}</Text>
+    </View>
+  );
+});
+
+const Flatlist = () => {
+  const [allProducts, setAllProducts] = useState([]);
   const [products, setProducts] = useState([]);
-  const Datas = [
-    {id: 1, name: 'Rohit', role: 'RN'},
-    {id: 2, name: 'Virat', role: 'Full Stack'},
-  ];
 
-  // const getProduct = async () => {
-  //   try {
-  //     const res = await fetch('https://fakestoreapi.com/products');
-  //     const data = await res.json();
-  //     setProducts(data);
-  //     console.log('API Response:', res);
-  //     console.log('data', data);
-  //   } catch (error) {
-  //     console.log('error', error);
-  //   }
-  // };
+  const [loading, setLoading] = useState(false);
+  const [footerLoading, setFooterLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState('');
 
-  const getProduct = async () => {
+  const ITEMS_PER_PAGE = 5;
+
+  const fetchProducts = async () => {
     try {
-      const res = await getProducts();
-      setProducts(res.data);
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
+      setLoading(true);
+      setError('');
 
-  // const addproduct = async () => {
-  //   try {
-  //     const res = await axios.post(
-  //       'https://fakestoreapi.com/products',
-  //       {
-  //         title: 'New Shirt',
-  //         price: 500,
-  //         description: 'Cotton shirt',
-  //         image: 'https://i.pravatar.cc',
-  //         category: 'fashion',
-  //       },
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //       },
-  //     );
-
-  //     console.log('API Response:', res.data);
-
-  //     Alert.alert('Success', 'Product Created');
-  //   } catch (error) {
-  //     console.log('error', error);
-  //   }
-  // };
-
-  const addproduct = async () => {
-    try {
-      const res = await addprduct({
-        title: 'New Shirt',
-        price: 500,
-        description: 'Cotton shirt',
-        image: 'https://i.pravatar.cc',
-        category: 'fashion',
-      });
-      console.log('API Response:', res.data);
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-
-  const updateprduct = async () => {
-    try {
-      const res = await axios.put(
-        'https://fakestoreapi.com/products/1',
-        {
-          title: 'New Shirt',
-          price: 500,
-          description: 'Cotton shirt',
-          image: 'https://i.pravatar.cc',
-          category: 'fashion',
-        },
-        {
-          headers: {
-            'content-type': 'application/json',
-          },
-        },
+      const response = await fetch(
+        'https://fakestoreapi.noksha.dev/api/products',
       );
-      console.log('API Response:', res.data);
 
-      Alert.alert('Success', 'Product Updated');
-    } catch (error) {
-      console.log('error', error);
+      const json = await response.json();
+
+      setAllProducts(json.data);
+      setProducts(json.data.slice(0, ITEMS_PER_PAGE));
+    } catch (e) {
+      setError('Failed to load products.');
+      console.log(e);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    getProduct();
+    fetchProducts();
   }, []);
 
-  const renderItem = ({item}) => {
-    return (
-      <View style={{padding: 10}}>
-        <Image
-          source={{uri: item.image}}
-          style={{width: 100, height: 100}}
-          resizeMode="contain"
-        />
-
-        <Text style={styles.title} numberOfLines={2}>
-          {item.title}
-        </Text>
-        <Text style={styles.price}>₹ {item.price}</Text>
-        <Text style={styles.category}>{item.category}</Text>
-      </View>
-    );
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchProducts();
+    setRefreshing(false);
   };
 
-  const emptyComponent = () => {
+  const loadMore = () => {
+    if (footerLoading) {
+      return;
+    }
+
+    if (products.length >= allProducts.length) {
+      return;
+    }
+
+    setFooterLoading(true);
+
+    setTimeout(() => {
+      const newLength = products.length + ITEMS_PER_PAGE;
+
+      setProducts(allProducts.slice(0, newLength));
+
+      setFooterLoading(false);
+    }, 1000);
+  };
+
+  const renderItem = useCallback(({item}) => {
+    return <Item item={item} />;
+  }, []);
+
+  if (loading) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text>No Data Found</Text>
+      <View style={styles.center}>
+        <ActivityIndicator size="large" />
       </View>
     );
-  };
+  }
+
+  if (error !== '') {
+    return (
+      <View style={styles.center}>
+        <Text>{error}</Text>
+      </View>
+    );
+  }
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-        <TouchableOpacity
-          style={{padding: 10}}
-          onPress={() => navigation.goBack()}>
-          <Text>Go Back</Text>
-        </TouchableOpacity>
-        <View>
-          <TouchableOpacity style={{padding: 10}} onPress={addproduct}>
-            <Text>ADD</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{padding: 10}} onPress={updateprduct}>
-            <Text>Update</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
+    <SafeAreaView style={styles.container}>
       <FlatList
         data={products}
         keyExtractor={item => item.id}
         renderItem={renderItem}
-        ListEmptyComponent={emptyComponent}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{padding: 16}}
-        // renderItem={({item})=>{
-        //     return(
-        //         <View style={{padding:10}}>
-        //             <Text>{item.name}</Text>
-        //             <Text>{item.subname}</Text>
-        //         </View>
-        //     )
-        // }}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
+        windowSize={7}
+        removeClippedSubviews={true}
+        updateCellsBatchingPeriod={50}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        getItemLayout={(data, index) => ({
+          length: 90,
+          offset: 90 * index,
+          index,
+        })}
+        ListHeaderComponent={() => (
+          <Text style={styles.header}>
+            Product List
+          </Text>
+        )}
+        ListFooterComponent={() =>
+          footerLoading ? (
+            <ActivityIndicator
+              size="small"
+              style={{marginVertical: 20}}
+            />
+          ) : null
+        }
+        ListEmptyComponent={() => (
+          <Text style={styles.empty}>
+            No Products Found
+          </Text>
+        )}
+        ItemSeparatorComponent={() => (
+          <View style={styles.separator} />
+        )}
+        contentContainerStyle={{paddingBottom: 20}}
       />
     </SafeAreaView>
   );
@@ -176,4 +153,50 @@ const Flatlist = ({navigation}) => {
 
 export default Flatlist;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    margin: 15,
+  },
+
+  itemContainer: {
+    height: 90,
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+    backgroundColor: '#fff',
+  },
+
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+
+  price: {
+    fontSize: 14,
+    color: 'green',
+    marginTop: 5,
+  },
+
+  separator: {
+    height: 1,
+    backgroundColor: '#ddd',
+  },
+
+  empty: {
+    textAlign: 'center',
+    marginTop: 50,
+    fontSize: 18,
+  },
+});

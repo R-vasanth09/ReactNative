@@ -1,4 +1,4 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View,Button} from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 
@@ -13,6 +13,10 @@ const Home = () => {
       <TouchableOpacity onPress={drawer}>
         <Text>Home</Text>
       </TouchableOpacity>
+      <Button
+        title="Open Top Tabs"
+        onPress={() => navigation.navigate('TopTab')}
+      />
     </View>
   );
 };

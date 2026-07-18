@@ -8,7 +8,7 @@ import DrawerNav from '../Navigation/DrawerNav';
 import Flatlist from '../Screen/Flatlist';
 import Login from '../Screen/Login';
 import Signup from '../Screen/Signup';
-
+import TopTab from './TopTab';
 
 const Stack = createNativeStackNavigator();
 
@@ -55,14 +55,14 @@ const StcakNav = () => {
         component={Account}
         options={{headerShown: false}}
       />
-      {/* <Stack.Screen
-      name="Notification"
-      component={Notification}
-      options={{headerShown: false}}
-      /> */}
       <Stack.Screen
         name="Flatlist"
         component={Flatlist}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="TopTab"
+        component={TopTab}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
